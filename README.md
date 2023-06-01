@@ -257,7 +257,6 @@ TestController.php:
 This method is often used to pass single variables to views.
 
 ##### 2nd Method: compact
-Route:
 
 TestController.php:
 
