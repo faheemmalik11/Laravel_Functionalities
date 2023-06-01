@@ -1,5 +1,8 @@
 # Laravel_Functionalities
 
+
+* [Laravel Setup](#Laravel-Setup)
+* [Routes](#Routes)
 ## Laravel Setup
 
 ###  Dependencies
@@ -48,4 +51,45 @@ composer create-project --prefer-dist laravel/laravel blog "6.*"
 If you have PHP installed locally and you would like to use PHP's built-in development server to serve your application, you may use the serve Artisan command. This command will start a development server at http://localhost:8000:
 ```sh
 php artisan serve
+```
+
+## Routes
+
+### Basic Routing
+
+The most basic Laravel routes accept a URI and a closure, providing a very simple and expressive method of defining routes and behavior without complicated routing configuration files:
+```sh
+use Illuminate\Support\Facades\Route;
+ 
+Route::get('/greeting', function () {
+    return 'Hello World';
+});
+```
+
+### Passing Parameters 
+
+You can pass parameters after the route name and it will automatically be passed to the closure function:
+```sh 
+use Illuminate\Support\Facades\Route;
+ 
+Route::get('/greeting/{id}', function ($id) {
+    return 'Hello World '. $id;
+});
+```
+You can pass as many parameters as you want:
+
+```sh 
+use Illuminate\Support\Facades\Route;
+ 
+Route::get('/greeting/{id}/{name}/{num}', function ($id, $name, $num) {
+    return 'Hello World '. $id . $name . $num;
+});
+```
+
+### Checking Routes
+
+To list all routes, You can use the following command:
+
+```sh 
+php artisan route:list
 ```
