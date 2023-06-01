@@ -6,7 +6,8 @@
 * [Controllers](#Controllers)
 * [Views](#Views)
 * [Laravel Blade](#Laravel-Blade)
-
+* [Laravel Migrations](#Laravel-Migrations)
+* [Php Artisan Command](Php Artisan-Command)
 ## Laravel Setup
 
 ###  Dependencies
@@ -287,3 +288,85 @@ In Laravel, Blade is the default templating engine that allows you to write clea
 Blade templates are typically stored in the resources/views directory of a Laravel project. These templates use the .blade.php file extension. Blade templates allow you to mix HTML markup with PHP code using special directives, making it easier to display dynamic data and perform logic within your views.
 
 
+## Laravel Migrations
+
+### Introduction 
+
+Migrations are like version control for your database, allowing your team to modify and share the application's database schema. Migrations are typically paired with Laravel's schema builder to build your application's database schema. If you have ever had to tell a teammate to manually add a column to their local database schema, you've faced the problem that database migrations solve.
+
+
+### Dependencies and Environment configuration
+
+You should have installed a database to connect with like mysql or sqlite etc. 
+The cofiguration of the database should be saved in your application .env file
+
+### Generating Migrations
+
+To create a migration, use the make:migration Artisan command:
+```sh
+php artisan make:migration create_users_table
+```
+The new migration will be placed in your database/migrations directory. Each migration file name contains a timestamp, which allows Laravel to determine the order of the migrations.
+
+The --table and --create options may also be used to indicate the name of the table and whether or not the migration will be creating a new table. These options pre-fill the generated migration stub file with the specified table:
+```sh
+php artisan make:migration create_users_table --create=users
+ 
+php artisan make:migration add_votes_to_users_table --table=users
+```
+
+### Migration Structure
+
+A migration class contains two methods: up and down. The up method is used to add new tables, columns, or indexes to your database, while the down method should reverse the operations performed by the up method.
+
+Within both of these methods you may use the Laravel schema builder to expressively create and modify tables. 
+
+### Running migrations
+
+To run all of your outstanding migrations, execute the migrate Artisan command:
+```sh
+php artisan migrate
+```
+
+### Rolling Back Migrations
+To roll back the latest migration operation, you may use the rollback command. This command rolls back the last "batch" of migrations, which may include multiple migration files:
+```sh
+php artisan migrate:rollback
+```
+
+The migrate:reset command will roll back all of your application's migrations:
+```sh
+php artisan migrate:reset
+```
+
+### Roll Back & Migrate Using A Single Command
+The migrate:refresh command will roll back all of your migrations and then execute the migrate command. This command effectively re-creates your entire database:
+```sh
+php artisan migrate:refresh
+ 
+// Refresh the database and run all database seeds...
+php artisan migrate:refresh --seed
+```
+
+### Drop All Tables & Migrate
+
+The migrate:fresh command will drop all tables from the database and then execute the migrate command:
+```sh
+php artisan migrate:fresh
+ 
+php artisan migrate:fresh --seed
+```
+
+### For All Methods and Details about Migrations
+
+Go to link for the documentation about Migrations:
+```sh
+https://laravel.com/docs/7.x/migrations
+```
+
+## Php Artisan Command
+
+`php artisan` command provides a number of helpful commands that can assist you while you build your application. To view a list of all available Artisan commands, you may use the list command:
+```sh
+php artisan list
+```
