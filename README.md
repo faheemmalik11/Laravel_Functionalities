@@ -5,6 +5,7 @@
 * [Routes](#Routes)
 * [Controllers](#Controllers)
 * [Views](#Views)
+* [Laravel Blade](#Laravel-Blade)
 
 ## Laravel Setup
 
@@ -277,3 +278,12 @@ TestController.php:
     }
 ```
 This method is often used to pass single variables to views.
+
+
+## Laravel Blade
+
+In Laravel, Blade is the default templating engine that allows you to write clean and readable PHP code within your views. It provides a simple and intuitive syntax for defining the structure and presentation of your web pages.
+
+Blade templates are typically stored in the resources/views directory of a Laravel project. These templates use the .blade.php file extension. Blade templates allow you to mix HTML markup with PHP code using special directives, making it easier to display dynamic data and perform logic within your views.
+
+
