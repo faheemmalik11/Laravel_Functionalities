@@ -3,6 +3,8 @@
 
 * [Laravel Setup](#Laravel-Setup)
 * [Routes](#Routes)
+* [Controllers](#Controllers)
+
 ## Laravel Setup
 
 ###  Dependencies
@@ -93,3 +95,119 @@ To list all routes, You can use the following command:
 ```sh 
 php artisan route:list
 ```
+
+## Controllers
+
+### Introduction
+
+Instead of defining all of your request handling logic as closures in your route files, you may wish to organize this behavior using "controller" classes. Controllers can group related request handling logic into a single class. For example, a UserController class might handle all incoming requests related to users, including showing, creating, updating, and deleting users. By default, controllers are stored in the app/Http/Controllers directory.
+
+### Creating Controllers
+
+#### Basic Controllers
+
+To quickly generate a new controller, you may run the make:controller Artisan command. By default, all of the controllers for your application are stored in the app/Http/Controllers directory:
+
+```sh
+php artisan make:controller Testcontroller
+```
+Let's take a look at an example of a basic controller. A controller may have any number of public methods which will respond to incoming HTTP requests:
+
+```sh
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class TestController extends Controller
+{
+    
+    public function contact()
+    {   
+
+        return view('contact');
+    }
+}
+```
+
+Once you have written a controller class and method, you may define a route to the controller method like so:
+
+```sh
+use App\Http\Controllers\TestController;
+Route::get('/contact', [TestController::class, 'contact']);
+```
+
+#### Resource Controllers
+
+If you think of each Eloquent model in your application as a "resource", it is typical to perform the same sets of actions against each resource in your application. For example, imagine your application contains a Photo model and a Movie model. It is likely that users can create, read, update, or delete these resources.
+
+Because of this common use case, Laravel resource routing assigns the typical create, read, update, and delete ("CRUD") routes to a controller with a single line of code. To get started, we can use the make:controller Artisan command's --resource option to quickly create a controller to handle these actions
+
+```sh
+php artisan make:controller PhotoController --resource
+```
+
+This command will generate a controller at app/Http/Controllers/PhotoController.php. The controller will contain a method for each of the available resource operations. Next, you may register a resource route that points to the controller:
+
+```sh
+use App\Http\Controllers\PhotoController;
+ 
+Route::resource('photos', PhotoController::class);
+```
+
+This resource method will generate the routes for each method in resource controller.
+
+#### passing Data
+
+It is somewhat similar to passing parametes to routes. You just have to parameterized the variables in the function of controller and then there are two ways to pass it to views:
+
+```sh
+use App\Http\Controllers\TestController;
+Route::get('/contact/{id}', [TestController::class, 'contact']);
+```
+##### 1st Method: with
+TestController.php:
+
+```sh
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class TestController extends Controller
+    {
+        
+        public function contact($id)
+        {   
+
+            return view('contact')->with(id,$id);
+        }
+    }
+```
+This method is often used to pass single variables to views.
+
+##### 2nd Method: compact
+Route:
+```sh
+use App\Http\Controllers\TestController;
+Route::get('/contact/{id}/{name}', [TestController::class, 'contact']);
+```
+
+TestController.php:
+
+```sh
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class TestController extends Controller
+    {
+        
+        public function contact($id,$name)
+        {   
+
+            return view('contact',compact(id,name));
+        }
+    }
+```
+This method is often used to pass single variables to views.
