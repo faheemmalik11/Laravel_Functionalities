@@ -210,4 +210,4 @@ TestController.php:
         }
     }
 ```
-This method is often used to pass single variables to views.
+This method is often used to pass multiple variables or array to views.
