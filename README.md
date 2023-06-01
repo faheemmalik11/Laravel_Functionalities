@@ -7,7 +7,7 @@
 * [Views](#Views)
 * [Laravel Blade](#Laravel-Blade)
 * [Laravel Migrations](#Laravel-Migrations)
-* [Php Artisan Command](Php Artisan-Command)
+* [Php Artisan Command](#Php-Artisan-Command)
 ## Laravel Setup
 
 ###  Dependencies
@@ -359,9 +359,7 @@ php artisan migrate:fresh --seed
 
 ### For All Methods and Details about Migrations
 
-Go to link for the documentation about Migrations:
-
-[Migration Documentation](#https://laravel.com/docs/7.x/migrations)
+Check out the [Migration Documentation](https://laravel.com/docs/7.x/migrations) for details about migrations.
 
 
 ## Php Artisan Command
