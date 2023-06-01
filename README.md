@@ -160,13 +160,13 @@ This resource method will generate the routes for each method in resource contro
 
 #### passing Data
 
-It is somewhat similar to passing parametes to routes. You just have to parameterized the variables in the function of controller and then there are two ways to pass it to views:
+It is somewhat similar to passing parametes to routes. You just have to parameterized the variables in the function of controller :
 
 ```sh
 use App\Http\Controllers\TestController;
 Route::get('/contact/{id}', [TestController::class, 'contact']);
 ```
-##### 1st Method: with
+
 TestController.php:
 
 ```sh
@@ -180,34 +180,7 @@ TestController.php:
         public function contact($id)
         {   
 
-            return view('contact')->with(id,$id);
+            return $id;
         }
     }
 ```
-This method is often used to pass single variables to views.
-
-##### 2nd Method: compact
-Route:
-```sh
-use App\Http\Controllers\TestController;
-Route::get('/contact/{id}/{name}', [TestController::class, 'contact']);
-```
-
-TestController.php:
-
-```sh
-    namespace App\Http\Controllers;
-
-    use Illuminate\Http\Request;
-
-    class TestController extends Controller
-    {
-        
-        public function contact($id,$name)
-        {   
-
-            return view('contact',compact(id,name));
-        }
-    }
-```
-This method is often used to pass multiple variables or array to views.
