@@ -360,9 +360,9 @@ php artisan migrate:fresh --seed
 ### For All Methods and Details about Migrations
 
 Go to link for the documentation about Migrations:
-```sh
-https://laravel.com/docs/7.x/migrations
-```
+
+[Migration Documentation](#https://laravel.com/docs/7.x/migrations)
+
 
 ## Php Artisan Command
 
