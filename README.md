@@ -4,6 +4,7 @@
 * [Laravel Setup](#Laravel-Setup)
 * [Routes](#Routes)
 * [Controllers](#Controllers)
+* [Views](#Views)
 
 ## Laravel Setup
 
@@ -158,7 +159,7 @@ Route::resource('photos', PhotoController::class);
 
 This resource method will generate the routes for each method in resource controller.
 
-#### passing Data
+### Passing Data
 
 It is somewhat similar to passing parametes to routes. You just have to parameterized the variables in the function of controller :
 
@@ -184,3 +185,140 @@ TestController.php:
         }
     }
 ```
+## Views
+
+### Introduction
+
+Of course, it's not practical to return entire HTML documents strings directly from your routes and controllers. Thankfully, views provide a convenient way to place all of our HTML in separate files.
+
+### Creating a view
+
+Views separate your controller / application logic from your presentation logic and are stored in the resources/views directory. When using Laravel, view templates are usually written using the Blade templating language. A simple view might look something like this:
+
+```sh
+<!-- View stored in resources/views/greeting.blade.php -->
+ 
+<html>
+    <body>
+        <h1>Hello, {{ $name }}</h1>
+    </body>
+</html>
+```
+
+Since this view is stored at resources/views/greeting.blade.php, we may return it using the global view helper like so:
+
+```sh 
+Route::get('/', function () {
+    return view('greeting', ['name' => 'James']);
+});
+```
+
+You can also return a view from controller like this:
+
+class TestController extends Controller
+    {
+        
+        public function contact()
+        {   
+
+            return view('greeting', ['name' => 'James']);
+        }
+    }
+
+But for this to happen, you need to define your route for the controller's method that return view.
+
+
+### Passing Data to View 
+## Views
+
+### Introduction
+
+Of course, it's not practical to return entire HTML documents strings directly from your routes and controllers. Thankfully, views provide a convenient way to place all of our HTML in separate files.
+
+### Creating a view
+
+Views separate your controller / application logic from your presentation logic and are stored in the resources/views directory. When using Laravel, view templates are usually written using the Blade templating language. A simple view might look something like this:
+
+```sh
+<!-- View stored in resources/views/greeting.blade.php -->
+ 
+<html>
+    <body>
+        <h1>Hello, {{ $name }}</h1>
+    </body>
+</html>
+```
+
+Since this view is stored at resources/views/greeting.blade.php, we may return it using the global view helper like so:
+
+```sh 
+Route::get('/', function () {
+    return view('greeting', ['name' => 'James']);
+});
+```
+
+You can also return a view from controller like this:
+
+class TestController extends Controller
+    {
+        
+        public function contact()
+        {   
+
+            return view('greeting', ['name' => 'James']);
+        }
+    }
+
+But for this to happen, you need to define your route for the controller's method that return view.
+
+
+### Passing Data to View 
+
+There are two ways to pass data to views:
+
+```sh
+use App\Http\Controllers\TestController;
+Route::get('/contact/{id}', [TestController::class, 'contact']);
+```
+##### 1st Method: with
+TestController.php:
+
+```sh
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class TestController extends Controller
+    {
+        
+        public function contact($id)
+        {   
+
+            return view('contact')->with(id,$id);
+        }
+    }
+```
+This method is often used to pass single variables to views.
+
+##### 2nd Method: compact
+Route:
+
+TestController.php:
+
+```sh
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class TestController extends Controller
+    {
+        
+        public function contact()
+        {   
+            $id = 1;
+            $name = 'James';
+            return view('contact',compact(id,name));
+        }
+    }
+```
+This method is often used to pass single variables to views.
