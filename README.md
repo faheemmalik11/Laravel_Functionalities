@@ -9,6 +9,7 @@
 * [Laravel Migrations](#Laravel-Migrations)
 * [Php Artisan Command](#Php-Artisan-Command)
 * [ORM Functions](#Orm-functions)
+* [Tinker](#Tinker)
 ## Laravel Setup
 
 ###  Dependencies
@@ -548,3 +549,19 @@ If you wish to truly remove a model from the database, you may use the `forceDel
 ```sh
 $user->forceDelete();
 ```
+
+## Tinker
+
+Laravel Tinker allows you to interact with a database without creating the routes. Laravel tinker is used with a php artisan to create the objects or modify the data. The php artisan is a command-line interface that is available with a Laravel. A tinker plays around the database means that it allows you to create the objects, insert the data, etc.
+
+### Command to use tinker
+```sh
+php artisan tinker
+```
+
+Once you have open tinker you can do things with it like creating, updating, reading, deleting, etc just like you do in routes. For example:
+```sh
+$item = App\Models\Item::where(id,11)->get();
+``` 
+We are using tinker to get the columns of 11 id in items table. You can also insert, update, delete even you can run relationships using it.
+
