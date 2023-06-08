@@ -9,6 +9,10 @@
 * [Laravel Migrations](#Laravel-Migrations)
 * [Php Artisan Command](#Php-Artisan-Command)
 * [Tinker](#Tinker)
+* [Validation](#Validation)
+* [Accessors & Mutators](#Accessors&Mutators)
+* [Query Scope](#Query-Scope)
+
 ## Laravel Setup
 
 ###  Dependencies
@@ -392,5 +396,217 @@ Once you have open tinker you can do things with it like creating, updating, rea
 $item = App\Models\Item::where(id,11)->get();
 ``` 
 We are using tinker to get the columns of 11 id in items table. You can also insert, update, delete even you can run relationships using it.
+
+<hr>
+
+## Validation
+
+Validation is used in laravel to ensure the integrity of data. It makes possible that no unintended or unexpected data stores to your database. Laravel provides several different approach to validate data. 
+
+### Validation Logic
+
+Let's take an example of store method in our PostController which is used to store posts in database. Let's validate the data before it gets stored.
+
+```sh
+
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'title' => 'required|unique:posts|max:255',
+        'body' => 'required',
+    ]);
+
+    user = User::find(1);
+        
+        $post = new Post(['title'=> $request->title]);
+        $user->posts()->save($post);
+        return redirect ('posts');
+}
+
+```
+Here we give condition on title that it should be must required. The title should be unique and the max characters it could contain is 255. On body, only required conditon is applied. 
+
+Alternatively, you could also give conditions in an array:
+
+```sh
+  public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => ['required', 'unique:posts', 'max:255'],
+            'body' => ['required']
+        ]);
+        $user = User::find(1);
+        
+        $post = new Post(['title'=> $request->title]);
+        $user->posts()->save($post);
+        return redirect ('posts');
+         
+    }
+
+```
+
+### Displaying errors
+
+If data is not validated according to the conditions, it generates errors which is stored in the sessions. But we can also display the error using the `$errors` variable given to us by laravel. Just go into the views and do:
+
+```sh
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Create Post</h1>
+        <form method='POST' action = '/posts' >
+            {{ csrf_field() }}
+            <label>Enter Title: </label>
+            <input type="text" name="title" />
+            <input type="submit" value="Submit" />
+        </form>
+
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+    </body>
+</html>
+```
+
+### Requests
+
+If you do not want to clutter your controllr's method with validation, you can use requests where you can define all the rules for your validation. After defining all the rules, you just have to import the created request in your controller and your data will be automatically validated. 
+
+First make a request:
+
+```sh
+php artisan make:request CreateRequest
+```
+Then go to the request which will be in App\Http\Requests directory and the rules for validation:
+```sh
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class createRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+
+                'title' => ['required', 'unique:posts', 'max:255'],
+                ''body' => ['required']
+            
+        ];
+    }
+}
+```
+Lastly import the request in your controller and use it in your method:
+```sh
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Post;
+use App\Http\Requests\createRequest;
+
+class PostController extends Controller
+{
+    
+    public function store(createRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = User::find(1);
+        
+        $post = new Post(['title'=> $request->title]);
+        $user->posts()->save($post);
+        return redirect ('posts');
+         
+    }
+}
+```
+<hr>
+
+## Accessors & Mutators
+
+Accessors are the methods that are used to access the data while Mutators are the methods that are used to set the data. Laravel provides us functionality to apply accessors and mutators in our application
+
+### Accessors
+
+To define an accessor, create a getFooAttribute method on your model where Foo is the "studly" cased name of the column you wish to access. In this example, we'll define an accessor for the first_name attribute. The accessor will automatically be called by Eloquent when attempting to retrieve the value of first_name:
+
+```sh
+public function getFirstNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+```
+To access the value of the mutator, you may simply access the first_name attribute:
+```sh
+$user = App\User::find(1);
+ 
+$firstName = $user->first_name;
+```
+
+### Mutators
+To define a mutator, define a setFooAttribute method on your model where Foo is the "studly" cased name of the column you wish to access. So, again, let's define a mutator for the first_name attribute. This mutator will be automatically called when we attempt to set the value of the first_name attribute on the model:
+
+```sh
+public function setFirstNameAttribute($value)
+    {
+        $this->attributes['first_name'] = strtolower($value);
+    }
+```
+
+So, for example, if we attempt to set the first_name attribute to Akbar:
+
+```sh
+$user = App\User::find(1);
+ 
+$user->first_name = 'Sally';
+```
+
+In this example, the setFirstNameAttribute function will be called with the value Sally. The mutator will then apply the strtolower function to the name and set its value in the internal $attributes array.
+
+<hr>
+
+## Query Scope
+
+###  Scopes
+To apply a scope on to a model, you can define a static method in your model which can then be called in the routes. It saves you from writing same code repititively in your routes. For example, you may need to frequently retrieve all users that are considered "popular". To define a scope, simply prefix an Eloquent model method with scope. Define in model:
+
+```sh
+public function scopePopular($query)
+    {
+        return $query->where('votes', '>', 100);
+    }
+
+```
+
+Then you can utilize it in your routes:
+```sh
+$users = App\User::popular()->active()
+```
 
 <hr>
