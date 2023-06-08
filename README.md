@@ -8,8 +8,11 @@
 * [Laravel Blade](#Laravel-Blade)
 * [Laravel Migrations](#Laravel-Migrations)
 * [Php Artisan Command](#Php-Artisan-Command)
-* [ORM Functions](#Orm-functions)
 * [Tinker](#Tinker)
+* [Validation](#Validation)
+* [Accessors & Mutators](#Accessors&Mutators)
+* [Query Scope](#Query-Scope)
+
 ## Laravel Setup
 
 ###  Dependencies
@@ -59,6 +62,7 @@ If you have PHP installed locally and you would like to use PHP's built-in devel
 ```sh
 php artisan serve
 ```
+<hr>
 
 ## Routes
 
@@ -100,6 +104,7 @@ To list all routes, You can use the following command:
 ```sh 
 php artisan route:list
 ```
+<hr>
 
 ## Controllers
 
@@ -189,6 +194,8 @@ TestController.php:
         }
     }
 ```
+<hr>
+
 ## Views
 
 ### Introduction
@@ -282,6 +289,7 @@ TestController.php:
 ```
 This method is often used to pass single variables to views.
 
+<hr>
 
 ## Laravel Blade
 
@@ -289,6 +297,7 @@ In Laravel, Blade is the default templating engine that allows you to write clea
 
 Blade templates are typically stored in the resources/views directory of a Laravel project. These templates use the .blade.php file extension. Blade templates allow you to mix HTML markup with PHP code using special directives, making it easier to display dynamic data and perform logic within your views.
 
+<hr>
 
 ## Laravel Migrations
 
@@ -363,6 +372,7 @@ php artisan migrate:fresh --seed
 
 Check out the [Migration Documentation](https://laravel.com/docs/7.x/migrations) for details about migrations.
 
+<hr>
 
 ## Php Artisan Command
 
@@ -370,185 +380,7 @@ Check out the [Migration Documentation](https://laravel.com/docs/7.x/migrations)
 ```sh
 php artisan list
 ```
-
-## ORM Functions
-
-### Introduction
-
-The Eloquent ORM included with Laravel provides a beautiful, simple ActiveRecord implementation for working with your database. Each database table has a corresponding "Model" which is used to interact with that table.
-
-Before getting started, be sure to configure a database connection in config/database.php.
-
-
-### Retrieving All Records
-
-```sh
-$users = User::all();
-```
-
-### Retrieving A Record By Primary Key
-
-```sh
-$user = User::find(1);
-var_dump($user->name);
-```
-
-### Retrieving A Model By Primary Key Or Throw An Exception
-
-Sometimes you may wish to throw an exception if a model is not found. To do this, you may use the firstOrFail method:
-```sh
-$model = User::findOrFail(1);
-$model = User::where('votes', '>', 100)->firstOrFail();
-```
-
-### Retrievin Data Based On Constraints
-
-```sh
-$count = User::where('votes', '>', 100)->count();
-```
-
-```sh
-$count = User::where('id', 2)->get();
-```
-
-### Inserting 
-
-To create a new record in the database from a model, simply create a new model instance and call the save method.
-
-```sh
-$user = new User;
- 
-$user->name = 'John';
-$user->save();
-```
-
-### Updating A Retrieved Model
-
-To update a model, you may retrieve it, change an attribute, and use the save method:
-```sh
-$user = User::find(1);
- 
-$user->email = 'john@foo.com';
-$user->save();
-```
-
-Or you can just:
-
-```sh
-User::where(1)->update(['email'=>'john@foo.com'])
-```
-
-### Deleting An Existing Model
-To delete a model, simply call the delete method on the instance:
-```sh
-$user = User::find(1);
-$user->delete();
-```
-OR
-
-```sh
-User::destroy(1);
- 
-User::destroy([1, 2, 3]);
- 
-User::destroy(1, 2, 3);
-```
-
-
-### Mass Assignment
-
-When creating a new model, you pass an array of attributes to the model constructor. These attributes are then assigned to the model via mass-assignment. This is convenient; however, can be a serious security concern when blindly passing user input into a model. If user input is blindly passed into a model, the user is free to modify any and all of the model's attributes. For this reason, all Eloquent models protect against mass-assignment by default.
-
-To get started, set the fillable or guarded properties on your model.
-
-
-#### Defining Fillable Attributes On A Model
-The fillable property specifies which attributes should be mass-assignable. This can be set at the class or instance level.
-```sh
-class User extends Model {
- 
-    protected $fillable = ['first_name', 'last_name', 'email'];
- 
-}
-```
-
-#### Defining Guarded Attributes On A Model
-
-The inverse of fillable is guarded, and serves as a "black-list" instead of a "white-list":
-```sh
-class User extends Model {
- 
-    protected $guarded = ['id', 'password'];
- 
-}
-```
-
-#### Using The Model Create Method
-
-You may also use the create method to save a new model in a single line. The inserted model instance will be returned to you from the method. However, before doing so, you will need to specify either a fillable or guarded attribute on the model, as all Eloquent models protect against mass-assignment.
-
-
-```sh
-// Create a new user in the database...
-$user = User::create(['name' => 'John']);
- 
-// Retrieve the user by the attributes, or create it if it doesn't exist...
-$user = User::firstOrCreate(['name' => 'John']);
- 
-// Retrieve the user by the attributes, or instantiate a new instance...
-$user = User::firstOrNew(['name' => 'John']);
-
-```
-
-### Soft Deleting
-
-When soft deleting a model, it is not actually removed from your database. Instead, a deleted_at timestamp is set on the record. To enable soft deletes for a model, apply the SoftDeletes to the model:
-
-```sh
-use Illuminate\Database\Eloquent\SoftDeletes;
- 
-class User extends Model {
- 
-    use SoftDeletes;
- 
-    protected $dates = ['deleted_at'];
- 
-}
-```
-To add a deleted_at column to your table, you may use the softDeletes method from a migration:
-```sh
-$table->softDeletes();
-```
-
-Now, when you call the delete method on the model, the deleted_at column will be set to the current timestamp. When querying a model that uses soft deletes, the "deleted" models will not be included in query results.
-
-
-#### Retrieving Soft deleted data
-
-To force soft deleted models to appear in a result set, use the `withTrashed` method on the query:
-
-```sh
-$users = User::withTrashed()->where('account_id', 1)->get();
-```
-
-If you wish to only receive soft deleted models in your results, you may use the `onlyTrashed` method:
-
-```sh
-$users = User::onlyTrashed()->where('account_id', 1)->get();
-```
-#### Restoring Soft deleted data
-To restore a soft deleted model into an active state, use the `restore` method:
-
-```sh
-$user->restore();
-```
-
-#### Permanently Deleting Soft deleted data
-If you wish to truly remove a model from the database, you may use the `forceDelete` method:
-
-```sh
-$user->forceDelete();
-```
+<hr>
 
 ## Tinker
 
@@ -565,3 +397,216 @@ $item = App\Models\Item::where(id,11)->get();
 ``` 
 We are using tinker to get the columns of 11 id in items table. You can also insert, update, delete even you can run relationships using it.
 
+<hr>
+
+## Validation
+
+Validation is used in laravel to ensure the integrity of data. It makes possible that no unintended or unexpected data stores to your database. Laravel provides several different approach to validate data. 
+
+### Validation Logic
+
+Let's take an example of store method in our PostController which is used to store posts in database. Let's validate the data before it gets stored.
+
+```sh
+
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'title' => 'required|unique:posts|max:255',
+        'body' => 'required',
+    ]);
+
+    user = User::find(1);
+        
+        $post = new Post(['title'=> $request->title]);
+        $user->posts()->save($post);
+        return redirect ('posts');
+}
+
+```
+Here we give condition on title that it should be must required. The title should be unique and the max characters it could contain is 255. On body, only required conditon is applied. 
+
+Alternatively, you could also give conditions in an array:
+
+```sh
+  public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => ['required', 'unique:posts', 'max:255'],
+            'body' => ['required']
+        ]);
+        $user = User::find(1);
+        
+        $post = new Post(['title'=> $request->title]);
+        $user->posts()->save($post);
+        return redirect ('posts');
+         
+    }
+
+```
+
+### Displaying errors
+
+If data is not validated according to the conditions, it generates errors which is stored in the sessions. But we can also display the error using the `$errors` variable given to us by laravel. Just go into the views and do:
+
+```sh
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Create Post</h1>
+        <form method='POST' action = '/posts' >
+            {{ csrf_field() }}
+            <label>Enter Title: </label>
+            <input type="text" name="title" />
+            <input type="submit" value="Submit" />
+        </form>
+
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+    </body>
+</html>
+```
+
+### Requests
+
+If you do not want to clutter your controllr's method with validation, you can use requests where you can define all the rules for your validation. After defining all the rules, you just have to import the created request in your controller and your data will be automatically validated. 
+
+First make a request:
+
+```sh
+php artisan make:request CreateRequest
+```
+Then go to the request which will be in App\Http\Requests directory and the rules for validation:
+```sh
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class createRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+
+                'title' => ['required', 'unique:posts', 'max:255'],
+                ''body' => ['required']
+            
+        ];
+    }
+}
+```
+Lastly import the request in your controller and use it in your method:
+```sh
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Post;
+use App\Http\Requests\createRequest;
+
+class PostController extends Controller
+{
+    
+    public function store(createRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = User::find(1);
+        
+        $post = new Post(['title'=> $request->title]);
+        $user->posts()->save($post);
+        return redirect ('posts');
+         
+    }
+}
+```
+<hr>
+
+## Accessors & Mutators
+
+Accessors are the methods that are used to access the data while Mutators are the methods that are used to set the data. Laravel provides us functionality to apply accessors and mutators in our application
+
+### Accessors
+
+To define an accessor, create a getFooAttribute method on your model where Foo is the "studly" cased name of the column you wish to access. In this example, we'll define an accessor for the first_name attribute. The accessor will automatically be called by Eloquent when attempting to retrieve the value of first_name:
+
+```sh
+public function getFirstNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+```
+To access the value of the mutator, you may simply access the first_name attribute:
+```sh
+$user = App\User::find(1);
+ 
+$firstName = $user->first_name;
+```
+
+### Mutators
+To define a mutator, define a setFooAttribute method on your model where Foo is the "studly" cased name of the column you wish to access. So, again, let's define a mutator for the first_name attribute. This mutator will be automatically called when we attempt to set the value of the first_name attribute on the model:
+
+```sh
+public function setFirstNameAttribute($value)
+    {
+        $this->attributes['first_name'] = strtolower($value);
+    }
+```
+
+So, for example, if we attempt to set the first_name attribute to Akbar:
+
+```sh
+$user = App\User::find(1);
+ 
+$user->first_name = 'Sally';
+```
+
+In this example, the setFirstNameAttribute function will be called with the value Sally. The mutator will then apply the strtolower function to the name and set its value in the internal $attributes array.
+
+<hr>
+
+## Query Scope
+
+###  Scopes
+To apply a scope on to a model, you can define a static method in your model which can then be called in the routes. It saves you from writing same code repititively in your routes. For example, you may need to frequently retrieve all users that are considered "popular". To define a scope, simply prefix an Eloquent model method with scope. Define in model:
+
+```sh
+public function scopePopular($query)
+    {
+        return $query->where('votes', '>', 100);
+    }
+
+```
+
+Then you can utilize it in your routes:
+```sh
+$users = App\User::popular()->active()
+```
+
+<hr>
