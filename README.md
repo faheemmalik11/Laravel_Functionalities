@@ -12,6 +12,9 @@
 * [Validation](#Validation)
 * [Accessors & Mutators](#Accessors&Mutators)
 * [Query Scope](#Query-Scope)
+* [Middleware](#Middleware)
+* [Session](#Session)
+* [Seeders](#Data-Seeding)
 
 ## Laravel Setup
 
@@ -610,3 +613,88 @@ $users = App\User::popular()->active()
 ```
 
 <hr>
+
+## Middleware
+Middleware is a mechanism that we can use to filter the requests which are entering your application. You can define a middleware on route so that each time that route is called, it will first check out the code in the middleware. For example, in auth middleware, it is checked if the user requesting is authenticated. If he/she is authenticated, he is directed further to application, if not he/she is redirected to the login page.
+
+### Defining a middleware
+You can create a middleware using command:
+```sh
+php artisan make:middleware <middleware_name>;
+```
+This command will create a middleware in your app/Http/Middleware directory of application. 
+
+### Registering the middleware
+
+#### Globally:
+Afte definig the middleware you have to register it. To register a middleware globally, you have to go to kernel.php and  list the middleware class in the $middleware property.
+
+### To routes:
+If you would like to assign middleware to specific routes, you may invoke the middleware method when defining the route:
+```sh
+use App\Http\Middleware\Authenticate;
+ 
+Route::get('/profile', function () {
+    // ...
+})->middleware(Authenticate::class);
+```
+
+## Session
+Session are the global variables that are used to store the user information. 
+
+### Storing session
+```sh
+Session::put('key', 'value');
+ 
+session(['key' => 'value']);
+```
+
+### Retrieving session
+```sh
+$value = Session::get('key');
+ 
+$value = session('key');
+```
+
+### Removing An Item From The Session
+```sh
+Session::forget('key');
+```
+
+## Seeders
+Seeders are used to store data in the database. Database Seeding saves you from the overhead of inserting data again and again in your database while developing. Laravel includes the ability to seed your database with data using seed classes. All seed classes are stored in the database/seeders directory.
+
+### Defining Seeder
+
+```sh
+php artisan make:seeder <seeder_NAME>
+```
+
+let's modify the default DatabaseSeeder class and add a database insert statement to the run method:
+```sh
+<?php
+ 
+namespace Database\Seeders;
+ 
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+ 
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Run the database seeders.
+     */
+    public function run(): void
+    {
+        DB::table('users')->insert([
+            'name' => Str::random(10),
+            'email' => Str::random(10).'@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+    }
+}
+```
+
+
